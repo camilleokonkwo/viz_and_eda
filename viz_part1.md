@@ -23,7 +23,7 @@ library(ggridges)
 ``` r
 weather_df = 
   rnoaa::meteo_pull_monitors(
-    c("USW00094728", "USW00022534", "USS0023B17S"),
+    c("USW00094728", "USC00519397", "USS0023B17S"),
     var = c("PRCP", "TMIN", "TMAX"), 
     date_min = "2021-01-01",
     date_max = "2022-12-31") |>
@@ -44,11 +44,11 @@ weather_df =
 
     ## file min/max dates: 1869-01-01 / 2023-09-30
 
-    ## using cached file: /Users/camilleokonkwo/Library/Caches/org.R-project.R/R/rnoaa/noaa_ghcnd/USW00022534.dly
+    ## using cached file: /Users/camilleokonkwo/Library/Caches/org.R-project.R/R/rnoaa/noaa_ghcnd/USC00519397.dly
 
-    ## date created (size, mb): 2023-09-28 10:20:38.826322 (3.83)
+    ## date created (size, mb): 2023-09-28 10:32:06.945778 (1.704)
 
-    ## file min/max dates: 1949-10-01 / 2023-09-30
+    ## file min/max dates: 1965-01-01 / 2023-09-30
 
     ## using cached file: /Users/camilleokonkwo/Library/Caches/org.R-project.R/R/rnoaa/noaa_ghcnd/USS0023B17S.dly
 
@@ -63,6 +63,73 @@ ggplot(weather_df, aes(x = tmin, y = tmax)) +
   geom_point()
 ```
 
-    ## Warning: Removed 17 rows containing missing values (`geom_point()`).
+    ## Warning: Removed 16 rows containing missing values (`geom_point()`).
 
 ![](viz_part1_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+Pipes and stuff
+
+``` r
+weather_df |>
+  filter(name == "CentralPark_NY") |>
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
+ggp_nyc_weather =
+  weather_df |>
+  filter(name == "CentralPark_NY") |>
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+## Fancy plot
+
+``` r
+ggplot(weather_df, aes(x = tmin, y = tmax)) +
+  geom_point(aes(color = name), alpha = 0.3) +
+  geom_smooth(se = FALSE)
+```
+
+    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+
+    ## Warning: Removed 16 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 16 rows containing missing values (`geom_point()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+Plot with facets
+
+``` r
+ggplot(weather_df, aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth() +
+  facet_grid(. ~ name)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+    ## Warning: Removed 16 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 16 rows containing missing values (`geom_point()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+ggplot(weather_df, aes(x = date, y = tmax, color = name)) +
+  geom_point(aes(size=prcp),alpha = 0.3) +
+  geom_smooth() +
+  facet_grid(. ~ name)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+    ## Warning: Removed 16 rows containing non-finite values (`stat_smooth()`).
+
+    ## Warning: Removed 18 rows containing missing values (`geom_point()`).
+
+![](viz_part1_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
